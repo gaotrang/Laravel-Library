@@ -28,15 +28,38 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+//dung redirect()->route() thi phai co -> name()
 Route::get('home', function(){
-    return '<h1>Home</h1>';
-});
+    return view('client.pages.home');
+})->name('home');
+
 Route::get('admin', function(){
-    return '<h1>Admin</h1>';
-})->name('admin');
+    return view('admin.layout.master');
+})->name('admin')->middleware('auth.admin');
+
+Route::get('cocacola', function(){
+    return '<h1>Cocacola</h1>';
+});
+Route::get('chivas', function(){
+    return '<h1>Chivas</h1>';
+})->middleware('age.18');
 
 
+Route::middleware('auth.admin')->name('admin.')->group(function (){
 
+    Route::get('admin/blog', function(){
+        return view('admin.pages.blog');
+    })->name('blog');
+
+    Route::get('admin/user', function(){
+        return view('admin.pages.user');
+    })->name('name');
+    
+    Route::get('admin/product', function(){
+        return view('admin.pages.product');
+    }) ->name('product');
+
+});
 
 
 require __DIR__.'/auth.php';
