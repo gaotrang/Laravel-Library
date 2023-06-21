@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
 //dung redirect()->route() thi phai co -> name()
 Route::get('home', function(){
     return view('client.pages.home');
@@ -59,7 +60,19 @@ Route::middleware('auth.admin')->name('admin.')->group(function (){
         return view('admin.pages.product');
     }) ->name('product');
 
-});
+    Route::get('admin/product/create', function(){
+        return view('admin.product.create');
+    }) ->name('product.create');
 
+    Route::get('admin/product_category/list', function(){
+        return view('admin.product_category.list');
+    }) ->name('product_category.list');
+
+    Route::get('admin/product_category/create', function(){
+        return view('admin.product_category.create');
+    }) ->name('product_category.create');
+
+
+});
 
 require __DIR__.'/auth.php';

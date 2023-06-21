@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('slug', 255)->nullable();
             $table->string('name', 255);
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
     }
