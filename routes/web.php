@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,8 +28,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
-
 //dung redirect()->route() thi phai co -> name()
 Route::get('home', function(){
     return view('client.pages.home');
@@ -55,7 +54,7 @@ Route::middleware('auth.admin')->name('admin.')->group(function (){
     Route::get('admin/user', function(){
         return view('admin.pages.user');
     })->name('name');
-    
+
     Route::get('admin/product', function(){
         return view('admin.pages.product');
     }) ->name('product');
@@ -64,7 +63,7 @@ Route::middleware('auth.admin')->name('admin.')->group(function (){
         return view('admin.product.create');
     }) ->name('product.create');
 
-    Route::get('admin/product_category/list', function(){
+    Route::get('admin/product_category', function(){
         return view('admin.product_category.list');
     }) ->name('product_category.list');
 
@@ -72,7 +71,9 @@ Route::middleware('auth.admin')->name('admin.')->group(function (){
         return view('admin.product_category.create');
     }) ->name('product_category.create');
 
+    Route::post('admin/product_category/save', [ProductCategoryController::class, 'store'])->name('product_category.save');
+
+    Route::post('admin/product_category/slug', [ProductCategoryController::class, 'getslug'])->name('product_category.slug');
 
 });
-
 require __DIR__.'/auth.php';
