@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
 //dung redirect()->route() thi phai co -> name()
 Route::get('home', function(){
     return view('client.pages.home');
@@ -53,7 +54,7 @@ Route::middleware('auth.admin')->name('admin.')->group(function (){
 
     Route::get('admin/user', function(){
         return view('admin.pages.user');
-    })->name('name');
+    })->name('user');
 
     Route::get('admin/product', function(){
         return view('admin.pages.product');
@@ -63,9 +64,7 @@ Route::middleware('auth.admin')->name('admin.')->group(function (){
         return view('admin.product.create');
     }) ->name('product.create');
 
-    Route::get('admin/product_category', function(){
-        return view('admin.product_category.list');
-    }) ->name('product_category.list');
+    Route::get('admin/product_category', [ProductCategoryController::class, 'index'])->name('product_category.list');
 
     Route::get('admin/product_category/create', function(){
         return view('admin.product_category.create');
@@ -75,5 +74,10 @@ Route::middleware('auth.admin')->name('admin.')->group(function (){
 
     Route::post('admin/product_category/slug', [ProductCategoryController::class, 'getslug'])->name('product_category.slug');
 
+    Route::get('admin/product_category/{id}', [ProductCategoryController::class, 'detail'])->name('product_category.detail');
+
+    Route::post('admin/product_category/update', [ProductCategoryController::class, 'update'])->name('product_category.update');
+
 });
+
 require __DIR__.'/auth.php';

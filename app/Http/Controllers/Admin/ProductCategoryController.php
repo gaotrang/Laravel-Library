@@ -58,4 +58,37 @@ class ProductCategoryController extends Controller
         return response()->json(['slug' => $slug]);
     }
 
+    public function index(){
+        //SQL RAW
+        $productCategories = DB::select('select * from product_category');
+
+        return view('admin.product_category.list', compact('productCategories'));
+    }
+
+    public function detail($id){
+        $productCategory = DB::select('select * from product_category where id = ?', [$id]);
+        return view('admin.product_category.detail', ['productCategory'=> $productCategory]);
+    }
+
+    public function update(Request $request){
+        //validate input from user
+        $request->validate([
+            'name' => 'required|min:3|max:255|string',
+            'status' => 'required|boolean'
+        ],
+        [
+            'name.required' => 'Category Name is required',
+            'slug.required' => 'Slug Category is required',
+            'status.required' => 'Status is required'
+        ]);
+        //Update into DB
+
+        $check = DB::update('Update product_category SET name = ?, slug = ?, status = ? where id = ?', [$request->name, $request->slug, $request->status, $request->id]);
+        $message = $check ? 'success' : 'failed';
+
+        return redirect()->route('admin.product_category.list')->with('message',  $message);
+
+    }
+
+
 }

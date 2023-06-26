@@ -22,7 +22,7 @@
   <!-- Main content -->
   <section class="content">
     <div class="container-fluid">
-      <h1>Create Product Category</h1>
+      <h1>Update Product Category</h1>
     </div>
     <div class="container-fluid">
       <div class="row">
@@ -31,18 +31,18 @@
           <!-- general form elements -->
           <div class="card card-primary">
             <div class="card-header">
-              <h3 class="card-title">Create Product Category</h3>
+              <h3 class="card-title">Update Product Category</h3>
             </div>
             <!-- /.card-header -->
             <!-- form start -->
-            <form role="form" method="POST" action="{{ route('admin.product_category.save') }}">
+            <form role="form" method="POST" action="{{ route('admin.product_category.update') }}">
                 {{-- Loi 419 la thieu @csrf --}}
                 @csrf
                 {{-- Loi 419 la thieu @csrf --}}
               <div class="card-body">
                 <div class="form-group">
                   <label for="exampleInputEmail1">Name</label>
-                  <input type="text" class="form-control" id="name" placeholder="Name" name="name">
+                  <input type="text" value="{{ $productCategory[0]->name }}" class="form-control" id="name" placeholder="Name" name="name">
                 </div>
                 <div>
                     @error('name')
@@ -52,7 +52,7 @@
 
                 <div class="form-group">
                   <label for="exampleInputEmail1">Slug</label>
-                  <input type="text" class="form-control" id="slug" placeholder="Slug" name="slug">
+                  <input type="text" value="{{ $productCategory[0]->slug }}" class="form-control" id="slug" placeholder="Slug" name="slug">
                 </div>
                 <div>
                     @error('slug')
@@ -62,8 +62,8 @@
                   <label for="status">Status</label>
                     <select name="status" id="status" class="form-select form control">
                       <option value="">-----Please Select-----</option>
-                      <option value="1">Show</option>
-                      <option value="0">Hide</option>
+                      <option {{ $productCategory[0]->status ? 'selected' : '' }}  value="1">Show</option>
+                      <option {{ (!$productCategory[0]->status) ? 'selected' : '' }} value="0">Hide</option>
                     </select>
                     <div>
                         @error('status')
@@ -73,7 +73,8 @@
               </div>
               <!-- /.card-body -->
               <div class="card-footer">
-                <button type="submit" class="btn btn-primary" name="create">Create</button>
+                <input type="hidden" name="id" value="{{ $productCategory[0]->id }}">
+                <button type="submit" class="btn btn-primary" name="create">Update</button>
               </div>
             </form>
           </div>

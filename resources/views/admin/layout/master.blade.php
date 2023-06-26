@@ -201,21 +201,27 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="./index.html" class="nav-link active">
+                                    <a href="{{ route('admin.product.create') }}" class="nav-link active">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Dashboard v1</p>
+                                        <p>Product</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="./index2.html" class="nav-link">
+                                    <a href="{{ route('admin.product_category.create') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Dashboard v2</p>
+                                        <p> Create Product Category</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="./index3.html" class="nav-link">
+                                    <a href="{{ route('admin.product_category.list') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Dashboard v3</p>
+                                        <p>Product Category List</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.user') }}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>User</p>
                                     </a>
                                 </li>
                             </ul>
