@@ -12,7 +12,7 @@ class ProductCategoryController extends Controller
         // dd($request->all());
         //Validate data from client
         $request->validate([
-            'name' => 'required|min:3|max:255|string',
+            'name' => 'required|min:3|max:255|string|unique:product_category,name',
             // 'slug' => 'required|min:3|max:255|string',
             'status' => 'required|boolean'
         ],
@@ -42,7 +42,7 @@ class ProductCategoryController extends Controller
 
     // dd($slug);
     $message = $check ? 'Create Product Category Success' : 'Create Product Category Failed';
-    return redirect()->route('admin.product_category.create')->with('message',$message);
+    return redirect()->route('admin.product_category.list')->with('message',$message);
     // $message='';
     // if($check){
     //     $message = 'Create Product Category Success';
@@ -58,11 +58,25 @@ class ProductCategoryController extends Controller
         return response()->json(['slug' => $slug]);
     }
 
-    public function index(){
+    public function index(Request $request){
         //SQL RAW
-        $productCategories = DB::select('select * from product_category');
+        // $page = $request->page ?? 1;
 
-        return view('admin.product_category.list', compact('productCategories'));
+        // $itemPerPage = config('myconfig.item_per_page');
+        // $pageFirst = ($page-1) * $itemPerPage;
+        // //SQL RAW
+        // $query = DB::select('select * from product_category');
+        // $numberOfPage = ceil(count($query)/$itemPerPage);
+
+        // $productCategories = DB::select("select * from product_category limit $pageFirst, $itemPerPage");
+
+        // return view('admin.product_category.list', compact('productCategories', 'numberOfPage'));
+
+        //QUERY BUILDER
+        //paginate chi dung cho Query Builder and pp 3 khong dung cho SQL RAW
+
+        $productCategories = DB::table('product_category')->paginate(config('myconfig.item_per_page'));
+        return view('admin.product_category.list',compact('productCategories'));
     }
 
     public function detail($id){
@@ -70,10 +84,10 @@ class ProductCategoryController extends Controller
         return view('admin.product_category.detail', ['productCategory'=> $productCategory]);
     }
 
-    public function update(Request $request){
+    public function update(Request $request, string $id){
         //validate input from user
         $request->validate([
-            'name' => 'required|min:3|max:255|string',
+            'name' => 'required|min:3|max:255|string|unique:product_category,name,'.$id,
             'status' => 'required|boolean'
         ],
         [
@@ -81,13 +95,34 @@ class ProductCategoryController extends Controller
             'slug.required' => 'Slug Category is required',
             'status.required' => 'Status is required'
         ]);
-        //Update into DB
 
-        $check = DB::update('Update product_category SET name = ?, slug = ?, status = ? where id = ?', [$request->name, $request->slug, $request->status, $request->id]);
+        //Update into DB - SQL Raw
+        // $check = DB::update('Update product_category SET name = ?, slug = ?, status = ? where id = ?', [$request->name, $request->slug, $request->status, $request->id]);
+
+        //Query Builder
+
+        $check = DB::table('product_category')
+        ->where('id', $id)
+        ->update([
+            'name' => $request->name,
+            'slug' => $request->slug,
+            'status' => $request->status,
+        ]);
+
         $message = $check ? 'success' : 'failed';
-
         return redirect()->route('admin.product_category.list')->with('message',  $message);
 
+    }
+
+    public function destroy($id){
+        //SQL RAW
+        // $check = DB::delete('delete from product_category where id = ?', [$id]);
+
+        //Query Builder
+        $check = DB::table('product_category')->where('id', $id)->delete();
+
+        $message = $check ? 'delete success' : 'failed';
+        return redirect()->route('admin.product_category.list')->with('message', $message);
     }
 
 

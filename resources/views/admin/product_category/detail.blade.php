@@ -35,7 +35,7 @@
             </div>
             <!-- /.card-header -->
             <!-- form start -->
-            <form role="form" method="POST" action="{{ route('admin.product_category.update') }}">
+            <form role="form" method="POST" action="{{ route('admin.product_category.update', ['id'=>$productCategory[0]->id]) }}">
                 {{-- Loi 419 la thieu @csrf --}}
                 @csrf
                 {{-- Loi 419 la thieu @csrf --}}

@@ -28,7 +28,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
 //dung redirect()->route() thi phai co -> name()
 Route::get('home', function(){
     return view('client.pages.home');
@@ -76,7 +75,9 @@ Route::middleware('auth.admin')->name('admin.')->group(function (){
 
     Route::get('admin/product_category/{id}', [ProductCategoryController::class, 'detail'])->name('product_category.detail');
 
-    Route::post('admin/product_category/update', [ProductCategoryController::class, 'update'])->name('product_category.update');
+    Route::post('admin/product_category/update/{id}', [ProductCategoryController::class, 'update'])->name('product_category.update');
+
+    Route::post('admin/product_category/delete/{id}',[ProductCategoryController::class, 'destroy'])->name('product_category.delete');
 
 });
 
