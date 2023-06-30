@@ -201,7 +201,7 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('admin.product.create') }}" class="nav-link active">
+                                    <a href="{{ route('admin.product.index') }}" class="nav-link active">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Product</p>
                                     </a>
@@ -764,6 +764,10 @@
     <script src="{{ asset('backend/dist/js/pages/dashboard.js') }}"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="{{ asset('backend/dist/js/demo.js') }}"></script>
+
+    <!-- CKEditor -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/38.1.0/classic/ckeditor.js"></script>
+
 
     @yield('js-custom')
 
