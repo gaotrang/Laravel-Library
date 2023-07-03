@@ -25,6 +25,10 @@ class Product extends Model
         'image_url' ,
         'status',
         'product_category_id'
-
     ];
+    public function category(){
+        // return $this->belongsTo(ProductCategory::class)->foreignKey('product_category_id');
+        return $this->belongsTo(ProductCategory::class,'product_category_id');
+
+    }
 }
