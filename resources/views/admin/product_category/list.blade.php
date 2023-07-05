@@ -15,7 +15,7 @@
           <div class="col-sm-12">
             <h1>Product Category List</h1>
             <button>
-                <a href="{{ route('admin.product_category.create')}}">Create Product</a>
+                <a href="{{ route('admin.product_category.create')}}">Create Product Category</a>
             </button>
           </div>
           <div class="col-sm-12">

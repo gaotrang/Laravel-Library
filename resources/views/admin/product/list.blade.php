@@ -14,6 +14,12 @@
         <div class="row mb-2">
           <div class="col-sm-12">
             <h1>Product List</h1>
+              <div>
+                <form method="GET">
+                <input type="text" placeholder="Search....." name="keyword" value="{{  is_null(request()->keyword) ? '' : request()->keyword }}" />
+                <button type="submit">Search</button>
+              </form>
+              </div>
             <button>
                 <a href="{{ route('admin.product.create')}}">Create Product</a>
             </button>
@@ -78,6 +84,7 @@
                             <td>
                                 <form method="post" action="{{ route('admin.product.destroy', ['product'=> $product->id]) }}">
                                     @csrf
+                                    @method('delete')
                                     <a href="{{ route('admin.product.show', ['product'=> $product->id]) }}" class="btn btn-primary">Edit</a>
                                     <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-danger">Delete</button>
                                 </form>
@@ -93,7 +100,7 @@
               </div>
               <!-- /.card-body -->
               <div class="card-footer clearfix">
-                {{ $products->links() }}
+                {{ $products->appends(request()->query())->links() }}
                 {{-- <ul class="pagination pagination-sm m-0 float-right">
                   <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
                   @for ($page = 1; $page <= $numberOfPage; $page++)

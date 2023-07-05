@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
@@ -13,10 +15,19 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $keyword = $request->keyword;
+        // dd($keyword);
         //Eloquent
-        $products = Product::paginate(config('myconfig.item_per_page'));
+        // $products = Product::paginate(config('myconfig.item_per_page'));
+
+        $products = Product::query();
+        if(is_null($keyword)){
+            $products = Product::paginate(config('myconfig.item_per_page'));
+        }else{
+            $products = Product::where('name', 'like', '%'.$keyword.'%')->paginate(config('myconfig.item_per_page'));
+        }
 
         //Query Builder
         //Select product.*, product_category.name
@@ -54,19 +65,20 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
         // dd($request);
-        $request->validate([
-            'name' => 'required|min:3|max:255|string|unique:product,name',
+        // $request->validate([
+        //     'name' => 'required|min:3|max:255|string|unique:product,name',
+        //     'product_category_id' => 'required'
 
-        ]);
+        // ]);
 
         //SQL RAW
         // $check = DB::insert("insert into product ('name') values (?)", [$request->name]);
         // //query builder
         // $check = DB::table('product')->insert(['name' => $request->name]);
-        
+            $fileName = null;
             if($request->hasFile('image_url')){
                 $originName = $request->file('image_url')->getClientOriginalName();
                 $fileName = pathinfo($originName, PATHINFO_FILENAME);
@@ -103,9 +115,17 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Product $product)
     {
-        //
+        	//SQL Raw
+            // $product = DB::select('select * from product where id = ?', [$id]);
+            //Query Builder
+            // $product = DB::table('product')->where('id', $id)->first();
+            //Eloquent
+            // $product = Product::find($id);
+            $productCategories = ProductCategory::where('status', 1)->get();
+
+            return view('admin.product.edit', ['product' => $product, 'productCategories' => $productCategories]);
     }
 
     /**
@@ -119,16 +139,62 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateProductRequest $request, Product $product)
     {
-        //
+        //validate
+        // $request->validate([
+        //     'name' => 'required',
+        //     'product_category_id' => 'required'
+        // ]);
+        // $product = Product::find($id);
+
+        $fileName = $product->image_url;
+
+        if($request->hasFile('image_url')){
+            $originName = $request->file('image_url')->getClientOriginalName();
+            $fileName = pathinfo($originName, PATHINFO_FILENAME);
+            $extension = $request->file('image_url')->getClientOriginalExtension();
+            $fileName = $fileName. '_' . time() . '.' . $extension;
+            //$fileName = 09Car_01_123486123.jpg 
+            $request->file('image_url')->move(public_path('images'),$fileName);
+
+            //Remove old image
+            if(!is_null($product->image_url) && file_exists("images/".$product->image_url)){
+                unlink("images/".$product->image_url);
+            }
+
+        }
+        $check = $product->update([
+            //'key' => value
+            'name' => $request->name,
+            'slug' => $request->slug,
+            'price' => $request->price,
+            'discount_price' => $request->discount_price,
+            'description' => $request->description,
+            'short_description' => $request->short_description,
+            'information' => $request->information,
+            'qty' => $request->qty,
+            'shipping' => $request->shipping,
+            'weight' => $request->weight,
+            'image_url' => $fileName,
+            'status' => $request->status,
+            'product_category_id' => $request->product_category_id
+        ]);
+
+        $message = $check ? 'Update Product Success' : 'Update Product Failed';
+        return redirect()->route('admin.product.index')->with('message',$message);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Product $product)
     {
-        //
+        // $product = Product::find($id);
+        $check = $product->delete();
+
+        $message = $check ? 'delete success' : 'delete failed';
+
+        return redirect()->route('admin.product.index')->with('message', $message);
     }
 }

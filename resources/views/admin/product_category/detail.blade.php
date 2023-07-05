@@ -103,7 +103,6 @@
                         $('#slug').val(res.slug);
                     },
                     error: function(res){
-
                     }
                 });
                 //alert(value);
