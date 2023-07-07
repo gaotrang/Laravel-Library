@@ -5,6 +5,7 @@ use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductCategoryRequest;
 use App\Http\Requests\UpdateProductCategoryRequest;
+use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -77,7 +78,9 @@ class ProductCategoryController extends Controller
         //QUERY BUILDER
         //paginate chi dung cho Query Builder and pp 3 khong dung cho SQL RAW
 
-        $productCategories = DB::table('product_category')->paginate(config('myconfig.item_per_page'));
+        $productCategories = ProductCategory::paginate(config('myconfig.item_per_page'));
+
+        // $productCategories = DB::table('product_category')->paginate(config('myconfig.item_per_page'));
         return view('admin.product_category.list',compact('productCategories'));
     }
 

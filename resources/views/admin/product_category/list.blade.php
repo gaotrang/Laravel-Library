@@ -55,6 +55,7 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $productCategory->name  }}</td>
                             <td>{{ $productCategory->slug}}</td>
+                            <td>{{ $productCategory->$product->count() }}</td>
                             {{-- <td>{{ $productCategory->status }}</td> --}}
                             <td>
                                 <a class="btn btn-{{ $productCategory->status ? 'success' : 'danger' }}">

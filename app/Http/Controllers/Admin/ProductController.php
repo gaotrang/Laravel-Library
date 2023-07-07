@@ -17,17 +17,51 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
+        // dd($request->all());
         $keyword = $request->keyword;
-        // dd($keyword);
+        $status = $request->status;
+        $amount_start = $request->amount_start;
+        $amount_end = $request->amount_end;
+        $sort = $request->sort;
+
         //Eloquent
         // $products = Product::paginate(config('myconfig.item_per_page'));
-
-        $products = Product::query();
-        if(is_null($keyword)){
-            $products = Product::paginate(config('myconfig.item_per_page'));
-        }else{
-            $products = Product::where('name', 'like', '%'.$keyword.'%')->paginate(config('myconfig.item_per_page'));
+        $filter = [];
+        if(!is_null($keyword)){
+            $filter[] = ['name', 'like', '%'.$keyword.'%'];
         }
+        if(!is_null($status)){
+            $filter[] = ['status', $status];
+        }
+        // dd($filter);
+        if(!is_null($amount_start) && !is_null($amount_end)){
+            $filter[] = ['price', '>=', $amount_start];
+            $filter[] = ['price', '<=', $amount_end];
+        }
+
+        //Sort
+        $sortBy = ['id', 'desc'];
+        switch($sort){
+            // case 0:
+            //     $sortBy = ['id', 'desc'];
+            //     break;
+            case 1:
+                $sortBy = ['price', 'asc'];
+                break;
+            case 2:
+                $sortBy = ['price', 'desc'];
+                break;
+        }
+
+        $products = Product::where($filter)->orderBy($sortBy[0], $sortBy[1])->paginate(config('myconfig.item_per_page'));
+
+
+        // $products = Product::query();
+        // if(is_null($keyword)){
+        //     $products = Product::paginate(config('myconfig.item_per_page'));
+        // }else{
+        //     $products = Product::where('name', 'like', '%'.$keyword.'%')->paginate(config('myconfig.item_per_page'));
+        // }
 
         //Query Builder
         //Select product.*, product_category.name
@@ -39,9 +73,11 @@ class ProductController extends Controller
         // ->select('product.*', 'product_category.name as product_category_name')
         // ->paginate(config('myconfig.item_per_page'));
 
-        
+
         // dd($products->toSql());
-        return view('admin.product.list', ['products' => $products]);
+        $max_price = Product::max('price');
+        $min_price = Product::min('price');
+        return view('admin.product.list', ['products' => $products, 'max_price' => $max_price, 'min_price' => $min_price]);
     }
 
     /**
@@ -84,7 +120,7 @@ class ProductController extends Controller
                 $fileName = pathinfo($originName, PATHINFO_FILENAME);
                 $extension = $request->file('image_url')->getClientOriginalExtension();
                 $fileName = $fileName. '_' . time() . '.' . $extension;
-                //$fileName = 09Car_01_123486123.jpg 
+                //$fileName = 09Car_01_123486123.jpg
                 $request->file('image_url')->move(public_path('images'),$fileName);
             }
 
@@ -155,7 +191,7 @@ class ProductController extends Controller
             $fileName = pathinfo($originName, PATHINFO_FILENAME);
             $extension = $request->file('image_url')->getClientOriginalExtension();
             $fileName = $fileName. '_' . time() . '.' . $extension;
-            //$fileName = 09Car_01_123486123.jpg 
+            //$fileName = 09Car_01_123486123.jpg
             $request->file('image_url')->move(public_path('images'),$fileName);
 
             //Remove old image

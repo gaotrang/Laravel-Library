@@ -17,7 +17,30 @@
               <div>
                 <form method="GET">
                 <input type="text" placeholder="Search....." name="keyword" value="{{  is_null(request()->keyword) ? '' : request()->keyword }}" />
+                <label for="status">Status</label>
+                <select name="status" id="status">
+                    <option @if (request()->status === '') selected @endif value="">---Select All---</option>
+                    <option @if (request()->status === '1') selected @endif value="1">Show</option>
+                    <option @if (request()->status === '0') selected @endif  value="0">Hide</option>
+                </select>
+
+                {{-- Sort --}}
+                <label for="status">Sort</label>
+                <select name="sort" id="status">
+                    <option @if (request()->sort === '0') selected @endif value="0">Lastest</option>
+                    <option @if (request()->sort === '1') selected @endif value="1">Price Low to High</option>
+                    <option @if (request()->sort === '2') selected @endif value="2">Price High to Low</option>
+                </select>
+                {{-- Search --}}
                 <button type="submit">Search</button>
+                {{-- Price --}}
+                    <p>
+                        <label for="amount">Price range:</label>
+                        <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+                        <input type="hidden" id="amount_start" name="amount_start" />
+                        <input type="hidden" id="amount_end" name="amount_end" />
+                    </p>
+                <div id="slider-range"></div>
               </form>
               </div>
             <button>
@@ -75,7 +98,7 @@
                             </td>
                             <td>{{ $product->category->name}}</td>
                             {{-- <td>{{ $product->status }}</td> --}}
-                            
+
                             <td>
                                 <a class="btn btn-{{ $product->status ? 'success' : 'danger' }}">
                                     {{ $product->status ? 'Show' : 'Hide' }}
@@ -120,4 +143,24 @@
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
+@endsection
+
+@section('js-custom')
+  <script type="text/javascript">
+        $(document).ready(function(){
+            $( "#slider-range" ).slider({
+                range: true,
+                min: {{ $min_price }},
+                max: {{ $max_price }},
+                values: [ {{ request()->amount_start ?? 0 }}, {{ request()->amount_end ?? 0 }} ],
+            slide: function( event, ui ) {
+                $( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+                $('#amount_start').val(ui.values[0]);
+                $('#amount_end').val(ui.values[1]);
+            }
+        });
+            $( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
+            " - $" + $( "#slider-range" ).slider( "values", 1 ) );
+        });
+  </script>
 @endsection
