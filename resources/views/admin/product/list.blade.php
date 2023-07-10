@@ -110,7 +110,14 @@
                                     @method('delete')
                                     <a href="{{ route('admin.product.show', ['product'=> $product->id]) }}" class="btn btn-primary">Edit</a>
                                     <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-danger">Delete</button>
+
                                 </form>
+                                @if($product->trashed())
+                                <form action="{{ route('admin.product.restore', ['product' => $product->id]) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success" >Restore</button>
+                                </form>
+                                @endif
                             </td>
                         </tr>
                     @empty
@@ -161,6 +168,8 @@
         });
             $( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
             " - $" + $( "#slider-range" ).slider( "values", 1 ) );
+            $('#amount_start').val($( "#slider-range" ).slider( "values", 0 ));
+            $('#amount_end').val($( "#slider-range" ).slider( "values", 1 ));
         });
   </script>
 @endsection

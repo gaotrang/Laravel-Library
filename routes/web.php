@@ -68,6 +68,7 @@ Route::middleware('auth.admin')->name('admin.')->group(function (){
     // Route::get('admin/product/delete', [ProductController::class, 'delete']) ->name('product.delete');
 
     Route::resource('admin/product', ProductController::class);
+    Route::post('admin/product/restore/{product}', [ProductController::class, 'restore'])->name('product.restore');
 
 
 

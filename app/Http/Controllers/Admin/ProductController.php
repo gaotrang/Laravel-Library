@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Pipeline;
 
 class ProductController extends Controller
 {
@@ -17,43 +18,43 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        // dd($request->all());
-        $keyword = $request->keyword;
-        $status = $request->status;
-        $amount_start = $request->amount_start;
-        $amount_end = $request->amount_end;
-        $sort = $request->sort;
+        // // dd($request->all());
+        // $keyword = $request->keyword;
+        // $status = $request->status;
+        // $amount_start = $request->amount_start;
+        // $amount_end = $request->amount_end;
+        // $sort = $request->sort;
 
-        //Eloquent
-        // $products = Product::paginate(config('myconfig.item_per_page'));
-        $filter = [];
-        if(!is_null($keyword)){
-            $filter[] = ['name', 'like', '%'.$keyword.'%'];
-        }
-        if(!is_null($status)){
-            $filter[] = ['status', $status];
-        }
-        // dd($filter);
-        if(!is_null($amount_start) && !is_null($amount_end)){
-            $filter[] = ['price', '>=', $amount_start];
-            $filter[] = ['price', '<=', $amount_end];
-        }
+        // //Eloquent
+        // // $products = Product::paginate(config('myconfig.item_per_page'));
+        // $filter = [];
+        // if(!is_null($keyword)){
+        //     $filter[] = ['name', 'like', '%'.$keyword.'%'];
+        // }
+        // if(!is_null($status)){
+        //     $filter[] = ['status', $status];
+        // }
+        // // dd($filter);
+        // if(!is_null($amount_start) && !is_null($amount_end)){
+        //     $filter[] = ['price', '>=', $amount_start];
+        //     $filter[] = ['price', '<=', $amount_end];
+        // }
 
-        //Sort
-        $sortBy = ['id', 'desc'];
-        switch($sort){
-            // case 0:
-            //     $sortBy = ['id', 'desc'];
-            //     break;
-            case 1:
-                $sortBy = ['price', 'asc'];
-                break;
-            case 2:
-                $sortBy = ['price', 'desc'];
-                break;
-        }
+        // //Sort
+        // $sortBy = ['id', 'desc'];
+        // switch($sort){
+        //     // case 0:
+        //     //     $sortBy = ['id', 'desc'];
+        //     //     break;
+        //     case 1:
+        //         $sortBy = ['price', 'asc'];
+        //         break;
+        //     case 2:
+        //         $sortBy = ['price', 'desc'];
+        //         break;
+        // }
 
-        $products = Product::where($filter)->orderBy($sortBy[0], $sortBy[1])->paginate(config('myconfig.item_per_page'));
+        // $products = Product::where($filter)->orderBy($sortBy[0], $sortBy[1])->paginate(config('myconfig.item_per_page'));
 
 
         // $products = Product::query();
@@ -72,6 +73,20 @@ class ProductController extends Controller
         // ->join('product_category', 'product_category.id', '=', 'product.product_category_id')
         // ->select('product.*', 'product_category.name as product_category_name')
         // ->paginate(config('myconfig.item_per_page'));
+
+        $pipelines = [
+            \App\Filters\ByKeyWord::class,
+            \App\Filters\ByStatus::class,
+            \App\Filters\ByMinMax::class,
+        ];
+
+        //withTrashed() hàm để lấy all record include record đã xóa
+        $pipeline = Pipeline::send(Product::query()->withTrashed())
+        ->through($pipelines)
+        ->thenReturn();
+
+        $products = $pipeline->paginate(config('myconfig.item_per_page'));
+
 
 
         // dd($products->toSql());
@@ -232,5 +247,14 @@ class ProductController extends Controller
         $message = $check ? 'delete success' : 'delete failed';
 
         return redirect()->route('admin.product.index')->with('message', $message);
+    }
+
+    public function restore(Product $product){
+        $product = Product::withTrashed()->find($product);
+        // $product->deleted_at = null;
+        // $product->save;
+
+        $product->restore();
+        return redirect()->route('admin.product.index')->with('message', 'Restore success');
     }
 }
