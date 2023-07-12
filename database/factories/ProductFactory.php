@@ -33,8 +33,8 @@ class ProductFactory extends Factory
             'qty'=>fake()->numberBetween(10, 1000),
             'shipping'=> fake()->text,
             'weight'=>fake()->randomFloat(2,0,10),
-            'image_url'=>'',
             'status'=>fake()->numberBetween(0, 1),
+
             'product_category_id'=> $productCategoryId
         ];
     }

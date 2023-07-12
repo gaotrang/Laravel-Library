@@ -12,6 +12,6 @@ class ProductCategory extends Model
     use HasFactory, SoftDeletes;
 
     public function products(){
-        return $this->hasMany(Product::class)->foreignKey('product_category_id');
+        return $this->hasMany(Product::class)->foreignKey('product_category_id')->withTrashed();
     }
 }

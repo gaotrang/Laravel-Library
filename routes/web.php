@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Client\ClientProductController;
+use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Models\ProductCategory;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,10 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-//dung redirect()->route() thi phai co -> name()
-Route::get('home', function(){
-    return view('client.pages.home');
-})->name('home');
+
 
 Route::get('admin', function(){
     return view('admin.layout.master');
@@ -90,5 +90,13 @@ Route::middleware('auth.admin')->name('admin.')->group(function (){
     Route::post('admin/product_category/delete/{id}',[ProductCategoryController::class, 'destroy'])->name('product_category.delete');
 
 });
+
+
+//dung redirect()->route() thi phai co -> name()
+Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+Route::get('product/{slug}', [ClientProductController::class, 'getProductBySlug'])->name('client.pages.shop-details');
+
+
 
 require __DIR__.'/auth.php';

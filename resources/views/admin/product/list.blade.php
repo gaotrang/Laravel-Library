@@ -90,11 +90,18 @@
                             <td>{{ $product->slug}}</td>
                             <td>{{ number_format( $product->price, 2)}}</td>
                             <td>{!! $product->description !!}</td>
-                            <td>
+                            {{-- <td>
                                 @php
-                                    $imageLink = (is_null($product->image_url)) || (!file_exists("images/".$product->image_url)) ? 'default_image.png' : $product->image_url;
+                                    $imageLink = (is_null($product->image_url)) || (!file_exists("images/".$product->image_url)) ? 'default_image.jpg' : $product->image_url;
                                 @endphp
                                 <img src="{{asset('images/'.$imageLink)}}" alt="{{ $product->name}}" width="200px", height="150px">
+                            </td> --}}
+                            <td>
+                                @php
+                                    $imageLink = is_null($product->image_url) || !file_exists('images/' . $product->image_url) ? 'default_image.jpg' : $product->image_url;
+                                @endphp
+                                <img src="{{ asset('images/' . $imageLink) }}"
+                                    alt="{{ $product->name }}" width="100px" height="100px">
                             </td>
                             <td>{{ $product->category->name}}</td>
                             {{-- <td>{{ $product->status }}</td> --}}
