@@ -5,7 +5,33 @@
     <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpg">
         <div class="container">
             <div class="row">
-                <div class="col-lg-12 text-center">
+                <div class="col-lg-4">
+                    <div class="hero__categories">
+                        <div class="hero__categories__all">
+                            <i class="fa fa-bars"></i>
+                            <span>All departments</span>
+                        </div>
+                        <ul>
+                            @foreach ($productCategories as $productCategory)
+                                <li>
+                                    <a href="#">{{ $productCategory->name }}</a>
+                                </li>
+                            @endforeach
+                            {{-- <li><a href="#">Fresh Meat</a></li>
+                            <li><a href="#">Vegetables</a></li>
+                            <li><a href="#">Fruit & Nut Gifts</a></li>
+                            <li><a href="#">Fresh Berries</a></li>
+                            <li><a href="#">Ocean Foods</a></li>
+                            <li><a href="#">Butter & Eggs</a></li>
+                            <li><a href="#">Fastfood</a></li>
+                            <li><a href="#">Fresh Onion</a></li>
+                            <li><a href="#">Papayaya & Crisps</a></li>
+                            <li><a href="#">Oatmeal</a></li>
+                            <li><a href="#">Fresh Bananas</a></li> --}}
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
                     <div class="breadcrumb__text">
                         <h2>Vegetable’s Package</h2>
                         <div class="breadcrumb__option">
@@ -17,35 +43,10 @@
                 </div>
             </div>
         </div>
+
+
     </section>
     <!-- Breadcrumb Section End -->
-
-    <div class="col-lg-3">
-        <div class="hero__categories">
-            <div class="hero__categories__all">
-                <i class="fa fa-bars"></i>
-                <span>All departments</span>
-            </div>
-            <ul>
-                @foreach ($productCategories as $productCategory)
-                    <li>
-                        <a href="#">{{ $productCategory->name }}</a>
-                    </li>
-                @endforeach
-                {{-- <li><a href="#">Fresh Meat</a></li>
-                <li><a href="#">Vegetables</a></li>
-                <li><a href="#">Fruit & Nut Gifts</a></li>
-                <li><a href="#">Fresh Berries</a></li>
-                <li><a href="#">Ocean Foods</a></li>
-                <li><a href="#">Butter & Eggs</a></li>
-                <li><a href="#">Fastfood</a></li>
-                <li><a href="#">Fresh Onion</a></li>
-                <li><a href="#">Papayaya & Crisps</a></li>
-                <li><a href="#">Oatmeal</a></li>
-                <li><a href="#">Fresh Bananas</a></li> --}}
-            </ul>
-        </div>
-    </div>
 
     <!-- Product Details Section Begin -->
     <section class="product-details spad">

@@ -2,10 +2,10 @@
 
 use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\ClientProductController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\ProfileController;
-use App\Models\ProductCategory;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,8 +32,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
-
 Route::get('admin', function(){
     return view('admin.layout.master');
 })->name('admin')->middleware('auth.admin');
@@ -96,6 +94,15 @@ Route::middleware('auth.admin')->name('admin.')->group(function (){
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::get('product/{slug}', [ClientProductController::class, 'getProductBySlug'])->name('client.pages.shop-details');
+
+Route::get('cart', [CartController::class, 'index'])->name('client.pages.shoping-cart');
+
+
+//Cart
+Route::get('product/add-to-cart/{productId}', [CartController::class, 'addProductToCart'])->name('product.add-to-cart');
+
+
+
 
 
 
