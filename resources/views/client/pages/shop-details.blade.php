@@ -72,7 +72,7 @@
                 </div>
                 <div class="col-lg-6 col-md-6">
                     <div class="product__details__text">
-                        <h3>Vetgetable’s Package</h3>
+                        <h3>{{$product->name}}</h3>
                         <div class="product__details__rating">
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
@@ -81,23 +81,23 @@
                             <i class="fa fa-star-half-o"></i>
                             <span>(18 reviews)</span>
                         </div>
-                        <div class="product__details__price">$50.00</div>
+                        <div class="product__details__price">{{number_format($product->price, 2)}}</div>
                         <p>Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a. Vestibulum ac diam sit amet quam
                             vehicula elementum sed sit amet dui. Sed porttitor lectus nibh. Vestibulum ac diam sit amet
                             quam vehicula elementum sed sit amet dui. Proin eget tortor risus.</p>
                         <div class="product__details__quantity">
                             <div class="quantity">
                                 <div class="pro-qty">
-                                    <input type="text" value="1">
+                                    <input type="text" value="1" id="qty">
                                 </div>
                             </div>
                         </div>
-                        <a href="#" class="primary-btn">ADD TO CARD</a>
+                        <a data-id="{{$product->id}}" data-url="{{ route('cart.add-to-cart', ['productId' => $product->id]) }}" href="#" class="primary-btn">ADD TO CARD</a>
                         <a href="#" class="heart-icon"><span class="icon_heart_alt"></span></a>
                         <ul>
                             <li><b>Availability</b> <span>In Stock</span></li>
-                            <li><b>Shipping</b> <span>01 day shipping. <samp>Free pickup today</samp></span></li>
-                            <li><b>Weight</b> <span>0.5 kg</span></li>
+                            <li><b>Shipping</b> <span>{{$product->shipping}} <samp>Free pickup today</samp></span></li>
+                            <li><b>Weight</b> <span>{{$product->weight}}</span></li>
                             <li><b>Share on</b>
                                 <div class="share">
                                     <a href="#"><i class="fa fa-facebook"></i></a>
@@ -114,7 +114,7 @@
                         <ul class="nav nav-tabs" role="tablist">
                             <li class="nav-item">
                                 <a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab"
-                                    aria-selected="true">Description</a>
+                                    aria-selected="true">{Description}</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#tabs-2" role="tab"
@@ -269,4 +269,36 @@
         </div>
     </section>
     <!-- Related Product Section End -->
+@endsection
+
+@section('js-custom')
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.primary-btn').on('click',function(){
+                event.preventDefault();
+                var qty = $('#qty').val();
+
+                var productId = $(this).data('id');
+
+                var url = $(this).data('url') + '/' + qty;
+
+                $.ajax({
+                    method: 'GET', //methos of form
+                    url: url, //action of form
+                    success: function(res){
+                        var total_price = res.total_price;
+                        var total_product = res.total_product;
+                        Swal.fire({
+                            icon: 'success',
+                            text: res.message,
+                            });
+                            $('#total_product').html(total_product);
+                            $('#total_price').html('$'+total_price);
+                        }
+                    });
+            });
+        });
+
+
+    </script>
 @endsection

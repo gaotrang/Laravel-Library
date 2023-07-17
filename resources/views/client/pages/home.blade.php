@@ -141,7 +141,7 @@
                             <ul class="featured__item__pic__hover">
                                 <li><a href="#"><i class="fa fa-heart"></i></a></li>
                                 <li><a href="#"><i class="fa fa-retweet"></i></a></li>
-                                <li><a class="product-add-to-cart" data-url="{{ route('product.add-to-cart', ['productId' => $product->id]) }}" href="#"><i class="fa fa-shopping-cart" ></i></a></li>
+                                <li><a class="product-add-to-cart" data-url="{{ route('cart.add-to-cart', ['productId' => $product->id]) }}" href="#"><i class="fa fa-shopping-cart" ></i></a></li>
                             </ul>
                         </div>
                         <div class="featured__item__text">
@@ -456,7 +456,9 @@
                         Swal.fire({
                             icon: 'success',
                             text: res.message,
-                            })
+                            });
+                        $('#total_product').html(total_product);
+                        $('#total_price').html('$'+total_price);
                     }
                 });
                 });

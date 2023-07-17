@@ -32,6 +32,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+
+//////////////////////////////////////
 Route::get('admin', function(){
     return view('admin.layout.master');
 })->name('admin')->middleware('auth.admin');
@@ -95,15 +98,11 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::get('product/{slug}', [ClientProductController::class, 'getProductBySlug'])->name('client.pages.shop-details');
 
-Route::get('cart', [CartController::class, 'index'])->name('client.pages.shoping-cart');
+
 
 
 //Cart
-Route::get('product/add-to-cart/{productId}', [CartController::class, 'addProductToCart'])->name('product.add-to-cart');
+    Route::get('product/add-to-cart/{productId}/{qty?}', [CartController::class, 'addProductToCart'])->name('product.add-to-cart');
 
 
-
-
-
-
-require __DIR__.'/auth.php';
+require __DIR__.'/cart/wed.php';

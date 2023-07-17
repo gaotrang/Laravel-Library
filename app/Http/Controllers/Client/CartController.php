@@ -15,7 +15,7 @@ class CartController extends Controller
         return view('client.pages.shoping-cart', compact('cart'));
     }
 
-    public function addProductToCart($productId)
+    public function addProductToCart($productId, $qty = 1)
     {
         $product = Product::find($productId);
         if($product){
@@ -26,16 +26,46 @@ class CartController extends Controller
                     'name' => $product->name,
                     'price' => number_format($product->price, 2),
                     'image_url' => asset('images/'.$imageLink),
-                    'qty' => ($cart[$productId]['qty'] ?? 0) + 1
+                    'qty' => ($cart[$productId]['qty'] ?? 0) + $qty
                 ];
                 //Add cart into session
                 session()->put('cart', $cart);
-            return response()->json(['message' => 'Add product success!']);
+
+                $total_product = count($cart);
+                $total_price = 0;
+
+                foreach($cart as $item){
+                    $total_product = $item['qty'] * $item['price'];
+                    $total_price += $total_product;
+                }
+
+            return response()->json(['message' => 'Add product success!', 'total_product' => $total_product, 'total_price'=> $total_price]);
         }else{
             return response()->json(['message' => 'Add product failed!'], Response::HTTP_NOT_FOUND);
         }
+    }
+    public function calculateTotalPrice(array $cart){
+        $total_price = 0;
 
-
+        foreach($cart as $item){
+            $total_price = $item['qty'] * $item['price'];
+    }
+    return number_format($total_price, 2);
 
     }
+
+    public function deleteProductInCart($productId){
+        $cart = session()->get('cart') ?? [];
+        if(array_key_exists($productId, $cart)){
+            unset($cart[$productId]);
+            session()->get('cart', $cart);
+        }else{
+            return response()->json(['message' => 'Add product failed!'], Response::HTTP_NOT_FOUND);
+        }
+        $total_product = count($cart);
+        $total_price = $this->calculateTotalPrice($cart);
+        return response()->json(['message' => 'Remove success!', 'total_product' => $total_product, 'total_price'=> $total_price]);
+    }
+
 }
+
