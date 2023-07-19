@@ -25,6 +25,9 @@ Route::prefix('cart/')->name('cart.')->group(function(){
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::get('add-to-cart/{productId}/{qty?}', [CartController::class, 'addProductToCart'])->name('add-to-cart');
     Route::get('delete-product-in-cart/{productId}', [CartController::class, 'deleteProductInCart'])->name('delete-product-in-cart');
+    Route::get('update-product-in-cart/{productId}/{qty?}', [CartController::class, 'updateProductInCart'])->name('update-product-in-cart');
+    Route::get('delete-cart', [CartController::class, 'deleteCart'])->name('delete-cart');
+
 });
 
 

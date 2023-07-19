@@ -89,12 +89,12 @@
                                         <th></th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="table-product">
                                     @php $total_price = 0; @endphp
                                     @foreach ($cart as $productId => $item)
                                 {{-- neu la Object {} thi dung $item->name --}}
                                 {{-- neu la array [] thi dung $item['name'] --}}
-                                    <tr>
+                                    <tr id="product{{$productId}}">
                                         <td class="shoping__cart__item">
                                             <img src="{{ $item['image_url'] }}" alt="">
                                             <h5>{{ $item['name'] }}</h5>
@@ -105,7 +105,7 @@
                                         <td class="shoping__cart__quantity">
                                             <div class="quantity">
                                                 <div class="pro-qty">
-                                                    <input type="text" value="{{ $item['qty'] }}">
+                                                    <input data-id="{{$productId}}" data-url="{{ route('cart.update-product-in-cart', ['productId'=> $productId]) }}" type="text" value="{{ $item['qty'] }}">
                                                 </div>
                                             </div>
                                         </td>
@@ -113,7 +113,10 @@
                                             ${{ number_format($item['price'] * $item['qty'], 2) }}
                                         </td>
                                         <td class="shoping__cart__item__close">
-                                            <span data-id="{{$productId}}" class="icon_close"></span>
+                                            <span 
+                                            data-url="{{ route('cart.delete-product-in-cart', ['productId' => $productId]) }}"
+                                            data-id="{{$productId}}" class="icon_close" id="product">
+                                            </span>
                                         </td>
                                     </tr>
                                         @php
@@ -129,8 +132,10 @@
                     <div class="col-lg-12">
                         <div class="shoping__cart__btns">
                             <a href="#" class="primary-btn cart-btn">CONTINUE SHOPPING</a>
-                            <a href="#" class="primary-btn cart-btn cart-btn-right"><span class="icon_loading"></span>
-                                Upadate Cart</a>
+                            <a href="#" class="primary-btn cart-btn cart-btn-right cart-btn-delete-all-item"
+                                    data-url="{{ route('cart.delete-cart') }}"
+                            ><span class="icon_closed"></span>
+                                Delete Cart</a>
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -162,10 +167,82 @@
 
 @section('js-custom')
     <script type="text/javascript">
-        $(document).ready(function(){
-            $('.icon_close').on('click',function(){
-                alert($productId)
+        $(document).ready(function() {
+            $('.icon_close').on('click', function() {
+                var productId = $(this).data('id');
+                var url = $(this).data('url');
+                $.ajax({
+                    method: 'GET',
+                    url: url, // action of form
+                    success: function(res) {
+                        swal.fire({
+                            icon: "Success",
+                            text: res.message,
+                        });
+                        var total_price = res.total_price;
+                        var total_product = res.total_product;
+
+                        $('#total_product').html(total_product);
+                        $('#total_price').html('$' + total_price);
+                        $('#product' + $productId).empty();
+                    },
+                });
+            });
+
+            $('span.qtybtn').on('click', function(){
+                var button = $(this);
+                var plus = button.hasClass('des') ? 'tru' : 'cong';
+                var oldValue = button.siblings('input').val();
+                if(button.hasClass('inc')){
+                    oldValue = 1 + parseFloat(oldValue);
+                }else{
+                    oldValue = parseFloat(oldValue) - 1;
+                    oldValue = oldValue >= 0 ? oldValue : 0;
+                }
+                var url = button.siblings('input').data('url') + "/" + oldValue;
+
+                $.ajax({
+                    method: 'GET', //methos of form
+                    url: url, //action of form
+                    success: function(res){
+                        Swal.fire({
+                            icon: 'success',
+                            text: res.message,
+                            });
+
+                        var totalPrice = res.totalPrice;
+                        var totalProduct = res.totalProduct;
+
+                            $('#total_product').html(totalProduct);
+                            $('#total_price').html('$'+ totalPrice);
+                            
+                            var urlCart = "{{route('cart.index') }}";
+                            var id = button.siblings('input').data('id');
+
+                            var selector = "#product"+id+".shoping__cart__total span";
+                            var urlUpdate = urlCart + " " + selector;
+
+                            var selectorSubtotal = '.shoping__checkout .subtotal';
+                            var selectorTotal = '.shoping__checkout .total';
+                            $(selector).load(urlUpdate);
+
+                            var urlUpdateSubtotal = urlCart + " " + selectorSubtotal;
+                            var urlUpdateTotal = urlCart + " " + selectorTotal;
+                            $(selectorSubtotal).load(urlUpdateSubtotal);
+                            $(selectorTotal).load(urlUpdateTotal);
+
+
+                        }
+                    });
             })
+            $('.cart-btn-delete-all-item').on('click', function(){
+                var url = $(this).data
+            })
+
+            function reloadView(res){
+
+            }
+
         });
     </script>
 @endsection

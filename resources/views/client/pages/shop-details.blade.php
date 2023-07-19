@@ -293,7 +293,7 @@
                             text: res.message,
                             });
                             $('#total_product').html(total_product);
-                            $('#total_price').html('$'+total_price);
+                            $('#total_price').html('$'+ total_price);
                         }
                     });
             });

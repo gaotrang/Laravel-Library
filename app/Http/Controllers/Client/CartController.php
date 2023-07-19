@@ -36,7 +36,7 @@ class CartController extends Controller
 
                 foreach($cart as $item){
                     $total_product = $item['qty'] * $item['price'];
-                    $total_price += $total_product;
+                    $total_price += $total_price;
                 }
 
             return response()->json(['message' => 'Add product success!', 'total_product' => $total_product, 'total_price'=> $total_price]);
@@ -65,6 +65,28 @@ class CartController extends Controller
         $total_product = count($cart);
         $total_price = $this->calculateTotalPrice($cart);
         return response()->json(['message' => 'Remove success!', 'total_product' => $total_product, 'total_price'=> $total_price]);
+    }
+
+
+    public function updateProductInCart($productId, $qty){
+        $cart = session()->get('cart') ?? [];
+        if(array_key_exists($productId, $cart)){
+            $cart[$productId]['qty'] = $qty;
+            if(!$qty){
+                unset($cart[$productId]);
+            }
+            session()->get('cart', $cart);
+        }
+
+        $total_product = count($cart);
+        $total_price = $this->calculateTotalPrice($cart);
+        return response()->json(['message' => 'Update success!', 'total_product' => $total_product, 'total_price'=> $total_price]);
+    }
+
+    public function deleteCart(){
+        session()->put('cart', []);
+        return response()->json(['message' => 'Delete Cart success!', 'total_product' => 0, 'total_price'=> 0]);
+        
     }
 
 }
