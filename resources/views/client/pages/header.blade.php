@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <title>Document</title>
 
 </head>
+
 <body>
     <header class="header">
         <div class="header__top">
@@ -40,16 +42,18 @@
                             <div class="header__top__right__auth">
                                 @php
                                     $user = session()->get('user');
-                                    $name = $user[5]['name'] ?? 'Login';
+                                    $name = $user[0]['name'] ?? 'Login';
                                 @endphp
-                                <a href="#"><i class="fa fa-user"></i>Hello {{$name}}</a>
+                                <a href="#"><i class="fa fa-user"></i>Hello {{ $name }}</a>
 
                                 @if (session()->has('user'))
-                                    <a href="#" onclick="event.preventDefault(); document.getElementById('frm-logout').submit();">
-                                    Log Out</a>
-                                    <form id="frm-logout" action="{{route('nguoidung.dangxuat')}}" method="POST" style="display:none;">
-                                    @csrf
-                                </form>
+                                    <a href="#"
+                                        onclick="event.preventDefault(); document.getElementById('frm-logout').submit();">
+                                        Log Out</a>
+                                    <form id="frm-logout" action="{{ route('nguoidung.dangxuat') }}" method="POST"
+                                        style="display:none;">
+                                        @csrf
+                                    </form>
                                 @endif
                             </div>
                         </div>
@@ -87,19 +91,21 @@
                         <ul>
                             <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a></li>
                             @php
-                                $total_product = session()->has('cart') ? count(session()->get('cart')): 0;
+                                $totalProduct = session()->has('cart') ? count(session()->get('cart')) : 0;
                             @endphp
-                            <li><a href="#"><i class="fa fa-shopping-bag"></i> <span id="total_product">{{$total_product}}</span></a></li>
+                            <li><a href="#"><i class="fa fa-shopping-bag"></i>
+                                    <span id="total_product">{{ $totalProduct }}</span></a></li>
                         </ul>
                         @php
-                            $total_price = 0;
-                            if(session()->has('cart')){
-                                foreach(session()->get('cart') as $item){
-                                    $total_price += $item['qty'] * $item['price'];
+                            $totalPrice = 0;
+                            if (session()->has('cart')) {
+                                foreach (session()->get('cart') as $item) {
+                                    $totalPrice += $item['qty'] * $item['price'];
                                 }
                             }
                         @endphp
-                        <div class="header__cart__price">item: <span id="total_price">${{ number_format($total_price, 2)}}</span></div>
+                        <div class="header__cart__price">item: <span
+                                id="total_price">${{ number_format($totalPrice, 2) }}</span></div>
                     </div>
                 </div>
             </div>
@@ -109,4 +115,5 @@
         </div>
     </header>
 </body>
+
 </html>

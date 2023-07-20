@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
@@ -31,26 +32,26 @@ class CartController extends Controller
                 //Add cart into session
                 session()->put('cart', $cart);
 
-                $total_product = count($cart);
-                $total_price = 0;
+                $totalProduct = count($cart);
+                $totalPrice = 0;
 
                 foreach($cart as $item){
-                    $total_product = $item['qty'] * $item['price'];
-                    $total_price += $total_price;
+                    $totalProduct = $item['qty'] * $item['price'];
+                    $totalPrice = $this->calculateTotalPrice($cart);
                 }
 
-            return response()->json(['message' => 'Add product success!', 'total_product' => $total_product, 'total_price'=> $total_price]);
+            return response()->json(['message' => 'Add product success!', 'total_product' => $totalProduct, 'total_price'=> $totalPrice]);
         }else{
             return response()->json(['message' => 'Add product failed!'], Response::HTTP_NOT_FOUND);
         }
     }
     public function calculateTotalPrice(array $cart){
-        $total_price = 0;
+        $totalPrice = 0;
 
         foreach($cart as $item){
-            $total_price = $item['qty'] * $item['price'];
+            $totalPrice = $item['qty'] * $item['price'];
     }
-    return number_format($total_price, 2);
+    return number_format($totalPrice, 2);
 
     }
 
@@ -58,13 +59,13 @@ class CartController extends Controller
         $cart = session()->get('cart') ?? [];
         if(array_key_exists($productId, $cart)){
             unset($cart[$productId]);
-            session()->get('cart', $cart);
+            session()->put('cart', $cart);
         }else{
-            return response()->json(['message' => 'Add product failed!'], Response::HTTP_NOT_FOUND);
+            return response()->json(['message' => 'Remove product failed!'], Response::HTTP_BAD_REQUEST);
         }
-        $total_product = count($cart);
-        $total_price = $this->calculateTotalPrice($cart);
-        return response()->json(['message' => 'Remove success!', 'total_product' => $total_product, 'total_price'=> $total_price]);
+        $totalProduct = count($cart);
+        $totalPrice = $this->calculateTotalPrice($cart);
+        return response()->json(['message' => 'Remove success!', 'total_product' => $totalProduct, 'total_price'=> $totalPrice]);
     }
 
 
@@ -75,12 +76,12 @@ class CartController extends Controller
             if(!$qty){
                 unset($cart[$productId]);
             }
-            session()->get('cart', $cart);
+            session()->put('cart', $cart);
         }
 
-        $total_product = count($cart);
-        $total_price = $this->calculateTotalPrice($cart);
-        return response()->json(['message' => 'Update success!', 'total_product' => $total_product, 'total_price'=> $total_price]);
+        $totalProduct = count($cart);
+        $totalPrice = $this->calculateTotalPrice($cart);
+        return response()->json(['message' => 'Update success!', 'total_product' => $totalProduct, 'total_price'=> $totalPrice]);
     }
 
     public function deleteCart(){

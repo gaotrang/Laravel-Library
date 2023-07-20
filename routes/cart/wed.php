@@ -1,11 +1,8 @@
 <?php
 
-use App\Http\Controllers\Admin\ProductCategoryController;
-use App\Http\Controllers\Admin\ProductController;
+
 use App\Http\Controllers\Client\CartController;
-use App\Http\Controllers\Client\ClientProductController;
-use App\Http\Controllers\Client\HomeController;
-use App\Http\Controllers\ProfileController;
+
 use Illuminate\Support\Facades\Route;
 
 /*

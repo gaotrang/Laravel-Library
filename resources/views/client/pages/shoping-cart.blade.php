@@ -1,8 +1,7 @@
 @extends('client.layout.master')
 
 @section('content')
-        <
-        <!-- Hero Section Begin -->
+    < <!-- Hero Section Begin -->
         <section class="hero hero-normal">
             <div class="container">
                 <div class="row">
@@ -90,37 +89,39 @@
                                     </tr>
                                 </thead>
                                 <tbody id="table-product">
-                                    @php $total_price = 0; @endphp
+                                    @php $totalPrice = 0; @endphp
                                     @foreach ($cart as $productId => $item)
-                                {{-- neu la Object {} thi dung $item->name --}}
-                                {{-- neu la array [] thi dung $item['name'] --}}
-                                    <tr id="product{{$productId}}">
-                                        <td class="shoping__cart__item">
-                                            <img src="{{ $item['image_url'] }}" alt="">
-                                            <h5>{{ $item['name'] }}</h5>
-                                        </td>
-                                        <td class="shoping__cart__price">
-                                            ${{ number_format($item['price'], 2) }}
-                                        </td>
-                                        <td class="shoping__cart__quantity">
-                                            <div class="quantity">
-                                                <div class="pro-qty">
-                                                    <input data-id="{{$productId}}" data-url="{{ route('cart.update-product-in-cart', ['productId'=> $productId]) }}" type="text" value="{{ $item['qty'] }}">
+                                        {{-- neu la Object {} thi dung $item->name --}}
+                                        {{-- neu la array [] thi dung $item['name'] --}}
+                                        <tr id="product{{ $productId }}">
+                                            <td class="shoping__cart__item">
+                                                <img src="{{ $item['image_url'] }}" alt="">
+                                                <h5>{{ $item['name'] }}</h5>
+                                            </td>
+                                            <td class="shoping__cart__price">
+                                                ${{ number_format($item['price'], 2) }}
+                                            </td>
+                                            <td class="shoping__cart__quantity">
+                                                <div class="quantity">
+                                                    <div class="pro-qty">
+                                                        <input data-id="{{ $productId }}"
+                                                            data-url="{{ route('cart.update-product-in-cart', ['productId' => $productId]) }}"
+                                                            type="text" value="{{ $item['qty'] }}">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td class="shoping__cart__total">
-                                            ${{ number_format($item['price'] * $item['qty'], 2) }}
-                                        </td>
-                                        <td class="shoping__cart__item__close">
-                                            <span 
-                                            data-url="{{ route('cart.delete-product-in-cart', ['productId' => $productId]) }}"
-                                            data-id="{{$productId}}" class="icon_close" id="product">
-                                            </span>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                            <td class="shoping__cart__total">
+                                                <span>${{ number_format($item['price'] * $item['qty'], 2) }}</span>
+                                            </td>
+                                            <td class="shoping__cart__item__close">
+                                                <span
+                                                    data-url="{{ route('cart.delete-product-in-cart', ['productId' => $productId]) }}"
+                                                    data-id="{{ $productId }}" class="icon_close" id="product">
+                                                </span>
+                                            </td>
+                                        </tr>
                                         @php
-                                            $total_price += $item['qty'] * $item['price'];
+                                            $totalPrice += $item['qty'] * $item['price'];
                                         @endphp
                                     @endforeach
                                 </tbody>
@@ -132,9 +133,8 @@
                     <div class="col-lg-12">
                         <div class="shoping__cart__btns">
                             <a href="#" class="primary-btn cart-btn">CONTINUE SHOPPING</a>
-                            <a href="#" class="primary-btn cart-btn cart-btn-right cart-btn-delete-all-item"
-                                    data-url="{{ route('cart.delete-cart') }}"
-                            ><span class="icon_closed"></span>
+                            <a href="#" class="primary-btn cart-btn cart-btn-right btn-delete-cart"
+                                data-url="{{ route('cart.delete-cart') }}"><span class="icon_closed"></span>
                                 Delete Cart</a>
                         </div>
                     </div>
@@ -153,8 +153,10 @@
                         <div class="shoping__checkout">
                             <h5>Cart Total</h5>
                             <ul>
-                                <li>Subtotal <span>{{number_format($total_price, 2)}}</span></li>
-                                <li>Total <span>{{number_format($total_price, 2)}}</span></li>
+                                <li>Subtotal <div class="subtotal"> <span>{{ number_format($totalPrice, 2) }}</span></div>
+                                </li>
+                                <li>Total <div class="total"> <span>{{ number_format($totalPrice, 2) }}</span></div>
+                                </li>
                             </ul>
                             <a href="#" class="primary-btn">PROCEED TO CHECKOUT</a>
                         </div>
@@ -163,86 +165,103 @@
             </div>
         </section>
         <!-- Shoping Cart Section End -->
-@endsection
+    @endsection
 
-@section('js-custom')
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('.icon_close').on('click', function() {
-                var productId = $(this).data('id');
-                var url = $(this).data('url');
-                $.ajax({
-                    method: 'GET',
-                    url: url, // action of form
-                    success: function(res) {
-                        swal.fire({
-                            icon: "Success",
-                            text: res.message,
-                        });
-                        var total_price = res.total_price;
-                        var total_product = res.total_product;
+    @section('js-custom')
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('.icon_close').on('click', function() {
+                    var productId = $(this).data('id');
+                    var url = $(this).data('url');
+                    $.ajax({
+                        method: 'GET',
+                        url: url, // action of form
+                        success: function(res) {
+                            Swal.fire({
+                                icon: "Success",
+                                text: res.message,
+                            });
+                            var total_price = res.total_price;
+                            var total_product = res.total_product;
 
-                        $('#total_product').html(total_product);
-                        $('#total_price').html('$' + total_price);
-                        $('#product' + $productId).empty();
-                    },
+                            $('#total_product').HTML(total_product);
+                            $('#total_price').html('$' + total_price);
+                            $('#product' + productId).empty();
+                        },
+                    });
                 });
-            });
 
-            $('span.qtybtn').on('click', function(){
-                var button = $(this);
-                var plus = button.hasClass('des') ? 'tru' : 'cong';
-                var oldValue = button.siblings('input').val();
-                if(button.hasClass('inc')){
-                    oldValue = 1 + parseFloat(oldValue);
-                }else{
-                    oldValue = parseFloat(oldValue) - 1;
-                    oldValue = oldValue >= 0 ? oldValue : 0;
-                }
-                var url = button.siblings('input').data('url') + "/" + oldValue;
+                $('span.qtybtn').on('click', function() {
+                    var button = $(this);
+                    var oldValue = button.siblings('input').val();
 
-                $.ajax({
-                    method: 'GET', //methos of form
-                    url: url, //action of form
-                    success: function(res){
-                        Swal.fire({
-                            icon: 'success',
-                            text: res.message,
+                    var plus = button.hasClass('des') ? 'tru' : 'cong';
+
+                    if (button.hasClass('inc')) {
+                        oldValue = 1 + parseFloat(oldValue);
+                    } else {
+                        oldValue = parseFloat(oldValue) - 1;
+                        oldValue = oldValue >= 0 ? oldValue : 0;
+                    }
+
+                    var url = button.siblings('input').data('url') + "/" + oldValue;
+
+                    $.ajax({
+                        method: 'GET', //methos of form
+                        url: url, //action of form
+                        success: function(res) {
+                            Swal.fire({
+                                icon: 'success',
+                                text: res.message,
                             });
 
-                        var totalPrice = res.totalPrice;
-                        var totalProduct = res.totalProduct;
-
-                            $('#total_product').html(totalProduct);
-                            $('#total_price').html('$'+ totalPrice);
-                            
-                            var urlCart = "{{route('cart.index') }}";
+                            var urlCart = "{{ route('cart.index') }}";
                             var id = button.siblings('input').data('id');
 
-                            var selector = "#product"+id+".shoping__cart__total span";
+                            var selector = "#product" + id + ".shoping__cart__total span";
                             var urlUpdate = urlCart + " " + selector;
+                            $(selector).load(urlUpdate)
 
-                            var selectorSubtotal = '.shoping__checkout .subtotal';
-                            var selectorTotal = '.shoping__checkout .total';
-                            $(selector).load(urlUpdate);
+                            reloadView(res);
 
-                            var urlUpdateSubtotal = urlCart + " " + selectorSubtotal;
-                            var urlUpdateTotal = urlCart + " " + selectorTotal;
-                            $(selectorSubtotal).load(urlUpdateSubtotal);
-                            $(selectorTotal).load(urlUpdateTotal);
-
-
+                            if (!total_product) {
+                                $('#product' + id).empty();
+                            }
                         }
                     });
-            })
-            $('.cart-btn-delete-all-item').on('click', function(){
-                var url = $(this).data
-            })
+                })
+                $('.btn-delete-cart').on('click', function() {
+                    var url = $(this).data('url');
+                    $.ajax({
+                        method: 'GET', //methos of form
+                        url: url, //action of form
+                        success: function(res) {
+                            Swal.fire({
+                                icon: 'success',
+                                text: res.message,
+                            });
 
-            function reloadView(res){
+                            reloadView(res);
+                            $('#table-product').empty();
+                        }
+                    })
 
-            }
+                    function reloadView(res) {
+                        var totalPrice = res.totalPrice;
+                        var totalProduct = res.totalProduct;
+                        $('#total_product span').html(totalProduct);
+                        $('#total_price span').html('$' + totalPrice);
 
-        });
-    </script>
-@endsection
+                        var selectorSubtotal = '.shoping__checkout .subtotal';
+                        var selectorTotal = '.shoping__checkout .total';
+
+                        var urlUpdateSubtotal = urlCart + " " + selectorSubtotal;
+                        var urlUpdateTotal = urlCart + " " + selectorTotal;
+                        $(selectorSubtotal).load(urlUpdateSubtotal);
+                        $(selectorTotal).load(urlUpdateTotal);
+                    }
+
+                });
+            });
+        </script>
+    @endsection
