@@ -296,6 +296,11 @@
                         });
                         $('#total_product').html(totalProduct);
                         $('#total_price').html('$' + totalPrice);
+                    },
+                    statusCode: {
+                        401: function(){
+                            window.location.href = "{{ route('login') }}";
+                        }
                     }
                 });
             });

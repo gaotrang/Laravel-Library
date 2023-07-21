@@ -158,7 +158,7 @@
                                 <li>Total <div class="total"> <span>{{ number_format($totalPrice, 2) }}</span></div>
                                 </li>
                             </ul>
-                            <a href="#" class="primary-btn">PROCEED TO CHECKOUT</a>
+                            <a href="{{ route('check-out') }}" class="primary-btn">PROCEED TO CHECKOUT</a>
                         </div>
                     </div>
                 </div>

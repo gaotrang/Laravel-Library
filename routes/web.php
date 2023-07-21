@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\ClientProductController;
 use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\Client\OrderController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -62,6 +63,8 @@ Route::middleware('auth.admin')->name('admin.')->group(function (){
         return view('admin.pages.product');
     }) ->name('product');
 
+ 
+
     // Route::get('admin/product/create', [ProductController::class, 'create']) ->name('product.create');
     // Route::get('admin/product/store', [ProductController::class, 'store']) ->name('product.store');
     // Route::get('admin/product/show{id}', [ProductController::class, 'show']) ->name('product.show');
@@ -99,10 +102,13 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('product/{slug}', [ClientProductController::class, 'getProductBySlug'])->name('client.pages.shop-details');
 
 
-
-
 //Cart
     Route::get('product/add-to-cart/{productId}/{qty?}', [CartController::class, 'addProductToCart'])->name('product.add-to-cart');
+    Route::get('/check-out', [OrderController::class, 'index'])->name('check-out');
+        
+
+    
 
 
 require __DIR__.'/cart/wed.php';
+require __DIR__.'/auth.php';

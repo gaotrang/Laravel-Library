@@ -453,12 +453,19 @@
                     method: 'GET', //methos of form
                     url: url, //action of form
                     success: function(res){
+                        var total_price = res.total_price;
+                        var total_product = res.total_product;
                         Swal.fire({
                             icon: 'success',
                             text: res.message,
                             });
                         $('#total_product').html(total_product);
                         $('#total_price').html('$'+total_price);
+                    },
+                    statusCode: {
+                        401: function(){
+                            window.location.href = "{{ route('login') }}";
+                        }
                     }
                 });
                 });
