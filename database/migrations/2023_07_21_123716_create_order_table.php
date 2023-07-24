@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('status', 255);
             $table->string('note', 255);
             $table->string('payment_method', 255);
+            $table->float('subtotal')->unsigned();
+            $table->float('total')->unsigned();
             $table->timestamps();
             $table->softDeletes();
         });

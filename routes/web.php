@@ -106,7 +106,7 @@ Route::get('product/{slug}', [ClientProductController::class, 'getProductBySlug'
     Route::get('product/add-to-cart/{productId}/{qty?}', [CartController::class, 'addProductToCart'])->name('product.add-to-cart');
     Route::get('/check-out', [OrderController::class, 'index'])->name('check-out');
         
-
+    
     
 
 

@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Events\OrderSuccessEvent;
 use App\Http\Controllers\Controller;
+use App\Mail\OrderAdminEmail;
+use App\Mail\OrderEmail;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderPaymentMethod;
@@ -12,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class CartController extends Controller
 {
@@ -99,6 +103,7 @@ class CartController extends Controller
         //Validate from request
         try{
             DB::beginTransaction();
+
             $cart = session()->get('cart', []);
             $totalPrice = 0;
             foreach($cart as $item){
@@ -116,6 +121,8 @@ class CartController extends Controller
                 'subtotal' => $totalPrice,
                 'total' => $totalPrice,
             ]);
+
+ 
     
             //Create record order items
             foreach($cart as $productId => $item){
@@ -142,10 +149,29 @@ class CartController extends Controller
     
             //Reset session
             session()->put('cart', []);
+
+            //Create event order success
+            event(new OrderSuccessEvent($order));
+
             
+
+            //Send mail to customer to confirm that order
+            // Mail::to('ttruonggiangbk@gmail.com')->send(new OrderAdminEmail($order));
+
+            //Send sms to customer
+
+            // $receiverNumber = '+84334400700';
+            // $client = new \Twilio\Rest\Client(env('TWILIO_ACCOUNT_SID'), env('TWILIO_AUTH_TOKEN'));
+            // $client->messages->create($receiverNumber, [
+            //     'from' => env('TWILIO_PHONE_NUMBER'),
+            //     'body' => 'YUP'
+            // ]);
+            
+
             DB::commit();
-        }catch(\Exception $message){
+        }catch(\Exception $exception){
             DB::rollBack();
+            return $exception->getMessage();
         }
 
         return redirect()->route('home')->with('msg', 'Order success!');

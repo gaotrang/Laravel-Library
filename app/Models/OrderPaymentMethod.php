@@ -19,10 +19,7 @@ class OrderPaymentMethod extends Model
 
     
     const STATUS_PENDING = 'pending';
-    const STATUS_SUCCESS = 'success';
-    const STATUS_CANCEL = 'cancel';
-    const STATUS_SHIPPING = 'shipping';
-    const STATUS_FAILED = 'failed';
+
 
     public function order()
     {

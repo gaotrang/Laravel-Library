@@ -83,60 +83,45 @@
             </div>
             <div class="checkout__form">
                 <h4>Billing Details</h4>
-                <form action="#">
+                <form method="POST" action="{{ route('cart.place-order') }}">
+                    @csrf
                     <div class="row">
                         <div class="col-lg-8 col-md-6">
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="checkout__input">
                                         <p>Name<span>*</span></p>
-                                        <input type="text">
+                                        <input name="name" disabled value="{{ Auth::check() ? Auth::user()->name  : ''}}" type="text">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="checkout__input">
                                 <p>Address<span>*</span></p>
-                                <input type="text" placeholder="Street Address" class="checkout__input__add">
-                                <input type="text" placeholder="Apartment, suite, unite ect (optinal)">
+                                <input name="address" type="text" placeholder="Street Address" class="checkout__input__add">
+                            </div>
+                            <div class="checkout__input">
+                                <p>City<span>*</span></p>
+                                <input name="city" type="text" placeholder="City" class="checkout__input__add">
                             </div>
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="checkout__input">
                                         <p>Phone<span>*</span></p>
-                                        <input type="text">
+                                        <input name="phone" value="{{ Auth::check() ? Auth::user()->phone : ''}}" type="text">
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="checkout__input">
                                         <p>Email<span>*</span></p>
-                                        <input disabled value="{{ Auth::check() ? Auth::user()->email : ''}}" type="text">
+                                        <input name="email" disabled value="{{ Auth::check() ? Auth::user()->email  : ''}}" type="text">
                                     </div>
                                 </div>
                             </div>
-                            <div class="checkout__input__checkbox">
-                                <label for="acc">
-                                    Create an account?
-                                    <input type="checkbox" id="acc">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </div>
-                            <p>Create an account by entering the information below. If you are a returning customer
-                                please login at the top of the page</p>
-                            <div class="checkout__input">
-                                <p>Account Password<span>*</span></p>
-                                <input type="text">
-                            </div>
-                            <div class="checkout__input__checkbox">
-                                <label for="diff-acc">
-                                    Ship to a different address?
-                                    <input type="checkbox" id="diff-acc">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </div>
+
                             <div class="checkout__input">
                                 <p>Order notes<span>*</span></p>
-                                <input type="text"
+                                <input name="note" type="text"
                                     placeholder="Notes about your order, e.g. special notes for delivery.">
                             </div>
                         </div>
@@ -157,13 +142,7 @@
                                 </ul>
                                 <div class="checkout__order__subtotal">Subtotal <span>{{ number_format($total, 2) }}</span></div>
                                 <div class="checkout__order__total">Total <span>{{ number_format($total, 2) }}</span></div>
-                                <div class="checkout__input__checkbox">
-                                    <label for="acc-or">
-                                        Create an account?
-                                        <input type="checkbox" id="acc-or">
-                                        <span class="checkmark"></span>
-                                    </label>
-                                </div>
+   
                                 <div class="checkout__input__checkbox">
                                     <label for="payment">
                                         Check Payment
@@ -173,8 +152,8 @@
                                 </div>
                                 <div class="checkout__input__checkbox">
                                     <label for="paypal">
-                                        Paypal
-                                        <input type="checkbox" id="paypal">
+                                            VNPay
+                                        <input type="radio" id="paypal" value="vnpay" name="payment_method">
                                         <span class="checkmark"></span>
                                     </label>
                                 </div>
