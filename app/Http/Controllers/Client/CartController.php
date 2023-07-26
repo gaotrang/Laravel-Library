@@ -16,6 +16,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Redirect;
 
 class CartController extends Controller
 {
@@ -29,25 +30,20 @@ class CartController extends Controller
     {
         $product = Product::find($productId);
         if($product){
-                $cart = session()->get('cart') ?? [];
+            $cart = session()->get('cart') ?? [];
 
-                $imageLink = is_null($product->image_url) || !file_exists('images/' . $product->image_url) ? 'default_image.jpg' : $product->image_url;
-                $cart[$product->id] = [
-                    'name' => $product->name,
-                    'price' => number_format($product->price, 2),
-                    'image_url' => asset('images/'.$imageLink),
-                    'qty' => ($cart[$productId]['qty'] ?? 0) + $qty
-                ];
-                //Add cart into session
-                session()->put('cart', $cart);
+            $imageLink = (is_null($product->image_url) || !file_exists('images/' . $product->image_url)) ? 'default_image.jpg' : $product->image_url;
+            $cart[$product->id] = [
+                'name' => $product->name,
+                'price' => number_format($product->price, 2),
+                'image_url' => asset('images/'.$imageLink),
+                'qty' => ($cart[$productId]['qty'] ?? 0) + $qty
+            ];
+            //Add cart into session
+            session()->put('cart', $cart);
 
-                $totalProduct = count($cart);
-                $totalPrice = 0;
-
-                foreach($cart as $item){
-                    $totalProduct = $item['qty'] * $item['price'];
-                    $totalPrice = $this->calculateTotalPrice($cart);
-                }
+            $totalProduct = count($cart);
+            $totalPrice = $this->calculateTotalPrice($cart);
 
             return response()->json(['message' => 'Add product success!', 'total_product' => $totalProduct, 'total_price'=> $totalPrice]);
         }else{
@@ -56,12 +52,10 @@ class CartController extends Controller
     }
     public function calculateTotalPrice(array $cart){
         $totalPrice = 0;
-
         foreach($cart as $item){
-            $totalPrice = $item['qty'] * $item['price'];
-    }
-    return number_format($totalPrice, 2);
-
+            $totalPrice += $item['qty'] * $item['price'];
+        }
+        return number_format($totalPrice, 2);
     }
 
     public function deleteProductInCart($productId){
@@ -96,7 +90,7 @@ class CartController extends Controller
     public function deleteCart(){
         session()->put('cart', []);
         return response()->json(['message' => 'Delete Cart success!', 'total_product' => 0, 'total_price'=> 0]);
-        
+
     }
 
     public function placeOrder(Request $request){
@@ -109,7 +103,7 @@ class CartController extends Controller
             foreach($cart as $item){
                 $totalPrice += $item['qty'] * $item['price'];
             }
-    
+
             //Create record order
             $order = Order::create([
                 'user_id' => Auth::user()->id,
@@ -122,8 +116,8 @@ class CartController extends Controller
                 'total' => $totalPrice,
             ]);
 
- 
-    
+
+
             //Create record order items
             foreach($cart as $productId => $item){
                 $orderItem = OrderItem::create([
@@ -134,7 +128,7 @@ class CartController extends Controller
                     'name' => $item['name'],
                 ]);
             }
-    
+
             //Create recordinto table OrderPaymentMethod
             $orderPaymentMethod = OrderPaymentMethod::create([
                 'order_id' => $order->id,
@@ -142,18 +136,71 @@ class CartController extends Controller
                 'total_balance' => $totalPrice,
                 'status' => OrderPaymentMethod::STATUS_PENDING,
             ]);
-    
+
             $user = User::find(Auth::user()->id);
             $user->phone = $request->phone;
             $user->save();
-    
+
             //Reset session
             session()->put('cart', []);
 
-            //Create event order success
-            event(new OrderSuccessEvent($order));
+            if(in_array($request->payment_method, ['vnpay_atm', 'vnpay_credit'])){
+                date_default_timezone_set('Asia/Ho_Chi_Minh');
+                $vnp_TxnRef = $order->id; //Mã giao dịch thanh toán tham chiếu của merchant
+                $vnp_Amount = $order->total; // Số tiền thanh toán
+                $vnp_Locale = 'vn'; //Ngôn ngữ chuyển hướng thanh toán
+                $vnp_BankCode = 'VNBANK'; //Mã phương thức thanh toán
+                $vnp_IpAddr = $_SERVER['REMOTE_ADDR']; //IP Khách hàng thanh toán
 
-            
+                $startTime = date("YmdHis");
+                $expire = date('YmdHis',strtotime('+15 minutes',strtotime($startTime)));
+
+
+                $vnp_Returnurl = route('cart.callback-vnpay');
+                $inputData = array(
+                    "vnp_Version" => "2.1.0",
+                    "vnp_TmnCode" => env('VNP_TMNCODE'),
+                    "vnp_Amount" => $vnp_Amount* 100000,
+                    "vnp_Command" => "pay",
+                    "vnp_CreateDate" => date('YmdHis'),
+                    "vnp_CurrCode" => "VND",
+                    "vnp_IpAddr" => $vnp_IpAddr,
+                    "vnp_Locale" => $vnp_Locale,
+                    "vnp_OrderInfo" => "Thanh toan GD:" . $vnp_TxnRef,
+                    "vnp_OrderType" => "other",
+                    "vnp_ReturnUrl" => $vnp_Returnurl,
+                    "vnp_TxnRef" => $vnp_TxnRef,
+                    "vnp_ExpireDate"=>$expire
+                );
+
+                if (isset($vnp_BankCode) && $vnp_BankCode != "") {
+                    $inputData['vnp_BankCode'] = $vnp_BankCode;
+                }
+                ksort($inputData);
+                $query = "";
+                $i = 0;
+                $hashdata = "";
+                foreach ($inputData as $key => $value) {
+                    if ($i == 1) {
+                        $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
+                    } else {
+                        $hashdata .= urlencode($key) . "=" . urlencode($value);
+                        $i = 1;
+                    }
+                    $query .= urlencode($key) . "=" . urlencode($value) . '&';
+                }
+
+                $vnp_Url = env('VNP_URL') . "?" . $query;
+
+                    $vnpSecureHash =   hash_hmac('sha512', $hashdata, env('VNP_HASHSECRET'));//
+                    $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
+                return Redirect::to($vnp_Url);
+
+            }else{
+                event(new OrderSuccessEvent($order));
+            }
+
+            //Create event order success
 
             //Send mail to customer to confirm that order
             // Mail::to('ttruonggiangbk@gmail.com')->send(new OrderAdminEmail($order));
@@ -166,7 +213,7 @@ class CartController extends Controller
             //     'from' => env('TWILIO_PHONE_NUMBER'),
             //     'body' => 'YUP'
             // ]);
-            
+
 
             DB::commit();
         }catch(\Exception $exception){
@@ -174,7 +221,24 @@ class CartController extends Controller
             return $exception->getMessage();
         }
 
+
         return redirect()->route('home')->with('msg', 'Order success!');
+    }
+
+    public function callBackVnPay(Request $request){
+        $order = Order::find($request->vnp_TxnRef);
+        if($request->vnp_ResponseCode === '00'){
+            if($order){
+                event(new OrderSuccessEvent($order));
+            }else if($request->vnp_ResponseCode === '10'){
+                if($order){
+                    $order->status = 'cancel';
+                    $orderPaymentMethod = $order->order_payment_methods[0];
+                    $orderPaymentMethod->status = 'cancel';
+                    $orderPaymentMethod->note = 'Giao dịch không thành công do: Khách hàng xác thực thông tin thẻ/tài khoản không đúng quá 3 lần';
+                }
+            }
+        }
     }
 }
 

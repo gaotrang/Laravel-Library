@@ -25,8 +25,10 @@ Route::prefix('cart/')->name('cart.')->middleware('auth')->group(function(){
     Route::get('delete-product-in-cart/{productId}', [CartController::class, 'deleteProductInCart'])->name('delete-product-in-cart');
     Route::get('update-product-in-cart/{productId}/{qty?}', [CartController::class, 'updateProductInCart'])->name('update-product-in-cart');
     Route::get('delete-cart', [CartController::class, 'deleteCart'])->name('delete-cart');
-    
+
     Route::post('place-order', [CartController::class, 'placeOrder'])->name('place-order');
+
+    Route::post('callback-vnpay', [CartController::class, 'callBackVnPay'])->name('callback-vnpay');
 
 
 
@@ -35,7 +37,7 @@ Route::prefix('cart/')->name('cart.')->middleware('auth')->group(function(){
     //     Mail::to('ttruonggiangbk@gmail.com')->send(new OrderEmail());
 
 
-   
+
 
 // });
 

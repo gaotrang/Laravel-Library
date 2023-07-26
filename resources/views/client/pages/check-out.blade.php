@@ -134,7 +134,7 @@
                                     @foreach ($cart as $productId => $item)
                                     @php $total += $item['price'] * $item['qty']; @endphp
                                         <li>{{ $item['name'] }} <span>{{ number_format($item['price']*$item['qty'], 2) }}</span></li>
-                                   
+
                                         @endforeach
                                     {{-- <li>Vegetable’s Package <span>$75.99</span></li>
                                     <li>Fresh Vegetable <span>$151.99</span></li>
@@ -142,7 +142,7 @@
                                 </ul>
                                 <div class="checkout__order__subtotal">Subtotal <span>{{ number_format($total, 2) }}</span></div>
                                 <div class="checkout__order__total">Total <span>{{ number_format($total, 2) }}</span></div>
-   
+
                                 <div class="checkout__input__checkbox">
                                     <label for="payment">
                                         Check Payment
@@ -153,7 +153,7 @@
                                 <div class="checkout__input__checkbox">
                                     <label for="paypal">
                                             VNPay
-                                        <input type="radio" id="paypal" value="vnpay" name="payment_method">
+                                        <input type="checkbox" id="paypal" value="vnpay" name="payment_method">
                                         <span class="checkmark"></span>
                                     </label>
                                 </div>

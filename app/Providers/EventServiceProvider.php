@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Events\OrderSuccessEvent;
 use App\Listeners\SendEmailToCustomerWhenOrderSuccess;
+use App\Listeners\SendSmsToCustomerWhenOrderSuccess;
+use App\Listeners\UpdateStatusOrderWhenOrderSuccess;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -21,7 +23,10 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         OrderSuccessEvent::class => [
-            SendEmailToCustomerWhenOrderSuccess::class
+            SendEmailToCustomerWhenOrderSuccess::class,
+            SendSmsToCustomerWhenOrderSuccess::class,
+            UpdateStatusOrderWhenOrderSuccess::class,
+
         ],
     ];
 

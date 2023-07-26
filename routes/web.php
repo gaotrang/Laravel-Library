@@ -63,7 +63,7 @@ Route::middleware('auth.admin')->name('admin.')->group(function (){
         return view('admin.pages.product');
     }) ->name('product');
 
- 
+
 
     // Route::get('admin/product/create', [ProductController::class, 'create']) ->name('product.create');
     // Route::get('admin/product/store', [ProductController::class, 'store']) ->name('product.store');
@@ -103,11 +103,11 @@ Route::get('product/{slug}', [ClientProductController::class, 'getProductBySlug'
 
 
 //Cart
-    Route::get('product/add-to-cart/{productId}/{qty?}', [CartController::class, 'addProductToCart'])->name('product.add-to-cart');
-    Route::get('/check-out', [OrderController::class, 'index'])->name('check-out');
-        
-    
-    
+Route::get('product/add-to-cart/{productId}/{qty?}', [CartController::class, 'addProductToCart'])->name('product.add-to-cart');
+Route::get('/check-out', [OrderController::class, 'index'])->name('check-out');
+
+
+
 
 
 require __DIR__.'/cart/wed.php';

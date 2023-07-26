@@ -184,7 +184,7 @@
                             var total_price = res.total_price;
                             var total_product = res.total_product;
 
-                            $('#total_product').HTML(total_product);
+                            $('#total_product').html(total_product);
                             $('#total_price').html('$' + total_price);
                             $('#product' + productId).empty();
                         },
@@ -260,7 +260,6 @@
                         $(selectorSubtotal).load(urlUpdateSubtotal);
                         $(selectorTotal).load(urlUpdateTotal);
                     }
-
                 });
             });
         </script>
