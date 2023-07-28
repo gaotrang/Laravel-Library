@@ -144,16 +144,16 @@
                                 <div class="checkout__order__total">Total <span>{{ number_format($total, 2) }}</span></div>
 
                                 <div class="checkout__input__checkbox">
-                                    <label for="payment">
-                                        Check Payment
-                                        <input type="checkbox" id="payment">
+                                    <label for="vnpay_atm">
+                                        VNP with ATM
+                                        <input type="radio" id="vnpay_atm" value="vnpay_atm" name="payment_method">
                                         <span class="checkmark"></span>
                                     </label>
                                 </div>
                                 <div class="checkout__input__checkbox">
-                                    <label for="paypal">
-                                            VNPay
-                                        <input type="checkbox" id="paypal" value="vnpay" name="payment_method">
+                                    <label for="vnpay_credit">
+                                            VNPay with VISA, MASTER
+                                        <input type="redio" id="vnpay_credit" value="vnpay_credit" name="payment_method">
                                         <span class="checkmark"></span>
                                     </label>
                                 </div>

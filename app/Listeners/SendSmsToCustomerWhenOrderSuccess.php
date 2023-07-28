@@ -3,17 +3,19 @@
 namespace App\Listeners;
 
 use App\Events\OrderSuccessEvent;
+use App\Http\Servies\SmsService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
 class SendSmsToCustomerWhenOrderSuccess
 {
+    private $smsService;
     /**
      * Create the event listener.
      */
-    public function __construct()
+    public function __construct(SmsService $smsService)
     {
-        //
+        $this->smsService = $smsService;
     }
 
     /**
@@ -29,5 +31,7 @@ class SendSmsToCustomerWhenOrderSuccess
         //         'from' => env('TWILIO_PHONE_NUMBER'),
         //         'body' => 'YUP'
         //     ]);
+
+        $this->smsService->send('+84334400700', 'Your order is success');
     }
 }

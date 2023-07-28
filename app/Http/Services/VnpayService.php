@@ -4,16 +4,17 @@ use App\Models\Order;
 
 class VnpayServies{
     public function getVnpayUrl(Order $order, $paymentMethod):string{
-        date_default_timezone_set('Asia/Ho_Chi_Minh');
-                $vnp_TxnRef = $order->id; //Mã giao dịch thanh toán tham chiếu của merchant
-                $vnp_Amount = $order->total; // Số tiền thanh toán
+                date_default_timezone_set('Asia/Ho_Chi_Minh');
+                // $vnp_TxnRef = $order->id; //Mã giao dịch thanh toán tham chiếu của merchant
+                // $vnp_Amount = $order->total; // Số tiền thanh toán
+                $vnp_TxnRef =(string)$order->id; //Mã giao dịch thanh toán tham chiếu của merchant
+                $vnp_Amount =(string)$order->total; // Số tiền thanh toán
                 $vnp_Locale = 'vn'; //Ngôn ngữ chuyển hướng thanh toán
                 $vnp_BankCode = $paymentMethod === 'vnpay_atm' ? 'VNBANK' : 'INTCART'; //Mã phương thức thanh toán
                 $vnp_IpAddr = $_SERVER['REMOTE_ADDR']; //IP Khách hàng thanh toán
 
                 $startTime = date("YmdHis");
                 $expire = date('YmdHis',strtotime('+15 minutes',strtotime($startTime)));
-
 
                 $vnp_Returnurl = route('cart.callback-vnpay');
                 $inputData = array(
