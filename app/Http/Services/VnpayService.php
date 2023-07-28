@@ -1,14 +1,15 @@
 <?php
-namespace App\Http\Servies;
+
+namespace App\Http\Services;
 use App\Models\Order;
 
-class VnpayServies{
+class VnpayService{
     public function getVnpayUrl(Order $order, $paymentMethod):string{
                 date_default_timezone_set('Asia/Ho_Chi_Minh');
                 // $vnp_TxnRef = $order->id; //Mã giao dịch thanh toán tham chiếu của merchant
                 // $vnp_Amount = $order->total; // Số tiền thanh toán
                 $vnp_TxnRef =(string)$order->id; //Mã giao dịch thanh toán tham chiếu của merchant
-                $vnp_Amount =(string)$order->total; // Số tiền thanh toán
+                $vnp_Amount =$order->total; // Số tiền thanh toán
                 $vnp_Locale = 'vn'; //Ngôn ngữ chuyển hướng thanh toán
                 $vnp_BankCode = $paymentMethod === 'vnpay_atm' ? 'VNBANK' : 'INTCART'; //Mã phương thức thanh toán
                 $vnp_IpAddr = $_SERVER['REMOTE_ADDR']; //IP Khách hàng thanh toán
@@ -20,7 +21,7 @@ class VnpayServies{
                 $inputData = array(
                     "vnp_Version" => "2.1.0",
                     "vnp_TmnCode" => env('VNP_TMNCODE'),
-                    "vnp_Amount" => $vnp_Amount* 100000,
+                    "vnp_Amount" => (string)$vnp_Amount* 100000,
                     "vnp_Command" => "pay",
                     "vnp_CreateDate" => date('YmdHis'),
                     "vnp_CurrCode" => "VND",

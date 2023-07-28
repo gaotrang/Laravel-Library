@@ -6,6 +6,8 @@ use App\Events\OrderSuccessEvent;
 use App\Listeners\SendEmailToCustomerWhenOrderSuccess;
 use App\Listeners\SendSmsToCustomerWhenOrderSuccess;
 use App\Listeners\UpdateStatusOrderWhenOrderSuccess;
+use App\Models\Product;
+use App\Observers\ProductObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -26,8 +28,11 @@ class EventServiceProvider extends ServiceProvider
             SendEmailToCustomerWhenOrderSuccess::class,
             SendSmsToCustomerWhenOrderSuccess::class,
             UpdateStatusOrderWhenOrderSuccess::class,
-
         ],
+
+    ];
+    protected $observers = [
+        Product::class => [ProductObserver::class],
     ];
 
     /**

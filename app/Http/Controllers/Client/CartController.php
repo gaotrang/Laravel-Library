@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Client;
 
 use App\Events\OrderSuccessEvent;
 use App\Http\Controllers\Controller;
-use App\Http\Servies\VnpayServies;
+use App\Http\Services\VnpayService;
+
 
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -22,7 +23,7 @@ use Illuminate\Support\Facades\Redirect;
 class CartController extends Controller
 {
     private $vnpayService;
-    public function __construct(VnpayServies $vnpayService){
+    public function __construct(VnpayService $vnpayService){
         $this->vnpayService = $vnpayService;    
     }
 
