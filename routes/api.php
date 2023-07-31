@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\V1\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,3 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 // Route::get('/check-out', [OrderController::class, 'index'])->name('check-out');
 // //http://127.0.0.1:8000/api/checkout
+
+
+//API
+Route::apiResource('v1/product', ProductController::class);

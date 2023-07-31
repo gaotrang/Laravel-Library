@@ -197,11 +197,17 @@
                             <a href="#" class="nav-link active">
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>
-                                    Dashboard
+                                    Home
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.dashboard') }}" class="nav-link active">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Dashboard</p>
+                                    </a>
+                                </li>
                                 <li class="nav-item">
                                     <a href="{{ route('admin.product.index') }}" class="nav-link active">
                                         <i class="far fa-circle nav-icon"></i>
@@ -770,7 +776,9 @@
     <script src="//cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
     <!-- CKEditor -->
     <script src="https://cdn.ckeditor.com/ckeditor5/38.1.0/classic/ckeditor.js"></script>
-
+    
+    {{-- GOOGLE-CHART --}}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     @yield('js-custom')
 

@@ -128,7 +128,11 @@
 @section('js-custom')
 <script>
     ClassicEditor
-        .create( document.querySelector( '#description' ) )
+        .create( document.querySelector( '#description' ),{
+          ckfinder:{
+            uploadUrl: '{{ route('admin.product.image.upload').'?_token='.csrf_token()}}',
+          }
+        })
         .catch( error => {
             console.error( error );
         } );

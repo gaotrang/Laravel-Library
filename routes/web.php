@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Client\CartController;
@@ -66,8 +67,6 @@ Route::middleware('auth.admin')->name('admin.')->group(function (){
         return view('admin.pages.product');
     }) ->name('product');
 
-
-
     // Route::get('admin/product/create', [ProductController::class, 'create']) ->name('product.create');
     // Route::get('admin/product/store', [ProductController::class, 'store']) ->name('product.store');
     // Route::get('admin/product/show{id}', [ProductController::class, 'show']) ->name('product.show');
@@ -96,6 +95,10 @@ Route::middleware('auth.admin')->name('admin.')->group(function (){
 
     Route::post('admin/product_category/delete/{id}',[ProductCategoryController::class, 'destroy'])->name('product_category.delete');
 
+    Route::get('product-upload-image',[ProductController::class, 'uploadImage'])->name('product.image.upload');
+
+    Route::get('admin/dashboard',[DashboardController::class, 'index'])->name('dashboard');
+
 });
 
 
@@ -112,6 +115,8 @@ Route::get('/check-out', [OrderController::class, 'index'])->name('check-out');
 
 Route::get('google/redirect',[GoogleController::class, 'redirect'])->name('google.redirect');
 Route::get('google/callback',[GoogleController::class, 'callback'])->name('google.callback');
+
+
 
 
 

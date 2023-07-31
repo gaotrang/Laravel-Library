@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Events\OrderSuccessEvent;
 use App\Http\Controllers\Controller;
+use App\Http\Repositories\ProductRepository;
 use App\Http\Services\VnpayService;
 
 
@@ -23,15 +24,21 @@ use Illuminate\Support\Facades\Redirect;
 class CartController extends Controller
 {
     private $vnpayService;
-    public function __construct(VnpayService $vnpayService){
-        $this->vnpayService = $vnpayService;    
+
+    private $productRepository;
+
+    public function __construct(VnpayService $vnpayService, ProductRepository $productRepository){
+        $this->vnpayService = $vnpayService;  
+        $this->productRepository = $productRepository;  
     }
 
 
     public function index(){
         // dd(session()->get('cart'));
         $cart = session()->get('cart') ?? [];
-        return view('client.pages.shoping-cart', compact('cart'));
+        //$product = Product::latest()->take(5)->get();
+        $products = $this->productRepository->getTopProducts(5);
+        return view('client.pages.shoping-cart', compact('cart', 'products'));
     }
 
     public function addProductToCart($productId, $qty = 1)
